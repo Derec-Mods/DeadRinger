@@ -13,46 +13,48 @@ public class DamageListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
+        if (!(event.getEntity() instanceof Player)) {
             return;
         }
+
+        Player player = (Player) event.getEntity();
 
         if (!InvincibilityManager.isInvincible(player)) {
             return;
         }
 
-        if (player.getHealth() <= 1.0) {
-            // Allow fall damage as per requirements
-            if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                return;
-            }
-
-            // Void damage: Allow actively protected players to die
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                return;
-            }
-
-            // Totems: If holding totem, allow damage to be taken for natural video flow
-            ItemStack mainHand = player.getInventory().getItemInMainHand();
-            ItemStack offHand = player.getInventory().getItemInOffHand();
-            if ((mainHand != null && mainHand.getType() == Material.TOTEM_OF_UNDYING) ||
-                (offHand != null && offHand.getType() == Material.TOTEM_OF_UNDYING)) {
-                return;
-            }
-
-            // Set minimal damage to show effects but schedule health restoration
-            event.setDamage(0.01);
-
-            // Schedule health restoration for next tick to ensure it happens after damage is applied
-            Bukkit.getScheduler().runTaskLater(DeadRinger.getInstance(), () -> {
-                if (player.isOnline()) {
-                    player.setHealth(1.0);
-                }
-            }, 1L);
-            /**
-             * Void damage: Allow actively protected players to die.
-             * Totems: If holding totem, allow damage to be taken in order to allow natural video flow
-             */
+        // Edge cases
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL ||
+            event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+            return;
         }
+
+        // Totems: If holding totem, allow damage to be taken for natural video flow
+        ItemStack mainHand = player.getInventory().getItemInMainHand();
+        ItemStack offHand = player.getInventory().getItemInOffHand();
+        if (mainHand.getType() == Material.TOTEM_OF_UNDYING ||
+            offHand.getType() == Material.TOTEM_OF_UNDYING) {
+            return;
+        }
+
+        double currentHealth = player.getHealth();
+        double finalDamage = event.getFinalDamage();
+        double healthAfterDamage = currentHealth - finalDamage;
+
+        if (healthAfterDamage < 1.0) {
+            if (currentHealth <= 1.0) {
+                event.setDamage(0.0);
+
+                Bukkit.getScheduler().runTaskLater(DeadRinger.getInstance(), () -> {
+                    if (player.isOnline()) {
+                        player.setHealth(1.0);
+                    }
+                }, 1L);
+            } else {
+                double allowedDamage = currentHealth - 1.0;
+                event.setDamage(allowedDamage);
+            }
+        }
+        // If damage wouldn't bring below 1.0 HP, allow normal damage
     }
 }

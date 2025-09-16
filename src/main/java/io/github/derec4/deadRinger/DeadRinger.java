@@ -17,9 +17,10 @@ public final class DeadRinger extends JavaPlugin {
 
         // Plugin startup logic
 
+        // Register event listeners
         getServer().getPluginManager().registerEvents(new DamageListener(), this);
         getServer().getPluginManager().registerEvents(new VeilJoinListener(), this);
-
+        getServer().getPluginManager().registerEvents(new DeathListener(), this);
 
         VeilCommand veilCommand = new VeilCommand();
         getCommand("veil").setExecutor(veilCommand);
