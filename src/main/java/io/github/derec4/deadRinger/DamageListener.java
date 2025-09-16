@@ -41,19 +41,15 @@ public class DamageListener implements Listener {
         double finalDamage = event.getFinalDamage();
         double healthAfterDamage = currentHealth - finalDamage;
 
+        // If damage would bring player below 1.0 HP, protect them
         if (healthAfterDamage < 1.0) {
-            if (currentHealth <= 1.0) {
-                event.setDamage(0.0);
+            event.setDamage(0.0);
 
-                Bukkit.getScheduler().runTaskLater(DeadRinger.getInstance(), () -> {
-                    if (player.isOnline()) {
-                        player.setHealth(1.0);
-                    }
-                }, 1L);
-            } else {
-                double allowedDamage = currentHealth - 1.0;
-                event.setDamage(allowedDamage);
-            }
+            Bukkit.getScheduler().runTaskLater(DeadRinger.getInstance(), () -> {
+                if (player.isOnline()) {
+                    player.setHealth(1.0);
+                }
+            }, 1L);
         }
         // If damage wouldn't bring below 1.0 HP, allow normal damage
     }
