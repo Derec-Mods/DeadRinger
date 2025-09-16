@@ -17,12 +17,10 @@ public class DamageListener implements Listener {
 
         Player player = (Player) event.getEntity();
 
-        // Check if player is protected
-        if (!InvincibilityManager.isProtected(player)) {
+        if (!InvincibilityManager.isInvincible(player)) {
             return;
         }
 
-        // Check if player is at half heart or below (1.0 = half heart)
         if (player.getHealth() <= 1.0) {
             // Allow fall damage as per requirements
             if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {

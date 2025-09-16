@@ -44,12 +44,12 @@ public class InvincibilityCommand implements CommandExecutor {
             return true;
         }
 
-        if (InvincibilityManager.isProtected(target)) {
+        if (InvincibilityManager.isInvincible(target)) {
             sender.sendMessage(ChatColor.YELLOW + target.getName() + " is already protected!");
             return true;
         }
 
-        InvincibilityManager.addProtectedPlayer(target);
+        InvincibilityManager.grantInvincibility(target);
         sender.sendMessage(ChatColor.GREEN + "Added invincibility protection to " + target.getName());
         target.sendMessage(ChatColor.GREEN + "You have been granted invincibility protection!");
         return true;

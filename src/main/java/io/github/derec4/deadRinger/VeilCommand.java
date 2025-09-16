@@ -69,7 +69,7 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean handleOn(CommandSender sender, Player target, boolean isTargetingSelf) {
-        if (InvincibilityManager.isProtected(target)) {
+        if (InvincibilityManager.isInvincible(target)) {
             if (isTargetingSelf) {
                 sender.sendMessage(ChatColor.YELLOW + "You are already protected!");
             } else {
@@ -78,7 +78,7 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        InvincibilityManager.addProtectedPlayer(target);
+        InvincibilityManager.grantInvincibility(target);
 
         if (isTargetingSelf) {
             sender.sendMessage(ChatColor.GREEN + "Veil protection enabled!");
@@ -90,7 +90,7 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean handleOff(CommandSender sender, Player target, boolean isTargetingSelf) {
-        if (!InvincibilityManager.isProtected(target)) {
+        if (!InvincibilityManager.isInvincible(target)) {
             if (isTargetingSelf) {
                 sender.sendMessage(ChatColor.YELLOW + "You are not currently protected!");
             } else {
@@ -99,7 +99,7 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        InvincibilityManager.removeProtectedPlayer(target);
+        InvincibilityManager.revokeInvincibility(target);
 
         if (isTargetingSelf) {
             sender.sendMessage(ChatColor.RED + "Veil protection disabled!");
@@ -111,7 +111,7 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean handleToggle(CommandSender sender, Player target, boolean isTargetingSelf) {
-        if (InvincibilityManager.isProtected(target)) {
+        if (InvincibilityManager.isInvincible(target)) {
             return handleOff(sender, target, isTargetingSelf);
         } else {
             return handleOn(sender, target, isTargetingSelf);
@@ -119,18 +119,17 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean handleList(CommandSender sender) {
-        if (InvincibilityManager.getProtectedPlayers().isEmpty()) {
+        List<Player> veiledPlayers = Bukkit.getOnlinePlayers().stream()
+            .filter(p -> InvincibilityManager.isInvincible(p))
+            .collect(Collectors.toList());
+        if (veiledPlayers.isEmpty()) {
             sender.sendMessage(ChatColor.YELLOW + "No players are currently veiled.");
             return true;
         }
-
         sender.sendMessage(ChatColor.GREEN + "Veiled players:");
-        InvincibilityManager.getProtectedPlayers().forEach(uuid -> {
-            Player player = Bukkit.getPlayer(uuid);
-            if (player != null) {
-                sender.sendMessage(ChatColor.WHITE + "- " + player.getName() +
-                    ChatColor.GRAY + " (Health: " + String.format("%.1f", player.getHealth()) + "/20.0)");
-            }
+        veiledPlayers.forEach(player -> {
+            sender.sendMessage(ChatColor.WHITE + "- " + player.getName() +
+                ChatColor.GRAY + " (Health: " + String.format("%.1f", player.getHealth()) + "/20.0)");
         });
         return true;
     }
