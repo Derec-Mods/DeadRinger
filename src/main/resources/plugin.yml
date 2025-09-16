@@ -8,20 +8,19 @@ description: Admin command plugin made for KiingTong
 website: https://www.youtube.com/@Kiingtong
 
 commands:
-  invincible:
-    description: Manage player invincibility protection
-    usage: /invincible <add|remove|list> <player>
-    permission: kiingtong.invincible
   veil:
     description: Toggle invincibility protection for yourself or others
     usage: /veil <on|off|toggle|list> [player]
     aliases: [v]
-    permission: kiingtong.veil
+    permission: veil.use
 
 permissions:
+  veil.use:
+    description: Allows player to toggle their own veil protection
+    default: true
+  veil.admin:
+    description: Allows player to target others and use /veil list
+    default: op
   kiingtong.invincible:
     description: Internal permission to track who is invincible
-    default: op
-  kiingtong.veil:
-    description: Use of the /veil command
     default: op

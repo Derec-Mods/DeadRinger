@@ -11,7 +11,7 @@ public class InvincibilityManager {
 
     public static void grantInvincibility(Player player) {
         if (!player.hasPermission(INVINCIBLE_PERMISSION)) {
-            PermissionAttachment attachment = player.addAttachment(io.github.derec4.deadRinger.DeadRinger.getInstance());
+            PermissionAttachment attachment = player.addAttachment(DeadRinger.getInstance());
             attachment.setPermission(INVINCIBLE_PERMISSION, true);
             attachments.put(player, attachment);
         }

@@ -5,16 +5,21 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DeadRinger extends JavaPlugin {
+    private static DeadRinger instance;
+
+    public static DeadRinger getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
+        instance = this;
+
         // Plugin startup logic
 
-        // Register event listener
         getServer().getPluginManager().registerEvents(new DamageListener(), this);
+        getServer().getPluginManager().registerEvents(new VeilJoinListener(), this);
 
-        // Register commands
-        getCommand("invincible").setExecutor(new InvincibilityCommand());
 
         VeilCommand veilCommand = new VeilCommand();
         getCommand("veil").setExecutor(veilCommand);
@@ -32,7 +37,5 @@ public final class DeadRinger extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        // Clear all protected players when plugin disables
-        InvincibilityManager.clearAll();
     }
 }

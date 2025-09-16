@@ -24,8 +24,11 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
 
         String action = args[0].toLowerCase();
 
-        // Handle list command
         if (action.equals("list")) {
+            if (!sender.hasPermission("veil.admin")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+                return true;
+            }
             return handleList(sender);
         }
 
@@ -39,15 +42,22 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.RED + "Console must specify a player!");
                 return true;
             }
+
+            if (!sender.hasPermission("veil.use")) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to toggle your own veil!");
+                return true;
+            }
+
             target = (Player) sender;
         } else {
             // Targeting another player - requires admin permission
-            if (!sender.hasPermission("kiingtong.invincible")) {
+            if (!sender.hasPermission("veil.admin")) {
                 sender.sendMessage(ChatColor.RED + "You don't have permission to target other players!");
                 return true;
             }
 
             target = Bukkit.getPlayer(args[1]);
+
             if (target == null) {
                 sender.sendMessage(ChatColor.RED + "Player '" + args[1] + "' not found or offline!");
                 return true;
@@ -122,10 +132,12 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
         List<Player> veiledPlayers = Bukkit.getOnlinePlayers().stream()
             .filter(p -> InvincibilityManager.isInvincible(p))
             .collect(Collectors.toList());
+
         if (veiledPlayers.isEmpty()) {
             sender.sendMessage(ChatColor.YELLOW + "No players are currently veiled.");
             return true;
         }
+
         sender.sendMessage(ChatColor.GREEN + "Veiled players:");
         veiledPlayers.forEach(player -> {
             sender.sendMessage(ChatColor.WHITE + "- " + player.getName() +
@@ -139,15 +151,14 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            // First argument: action
             List<String> actions = Arrays.asList("on", "off", "toggle", "list");
             return actions.stream()
                     .filter(action -> action.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         } else if (args.length == 2) {
-            // Second argument: player name (only if sender has admin permission and action isn't "list")
             String action = args[0].toLowerCase();
-            if (!action.equals("list") && sender.hasPermission("kiingtong.invincible")) {
+
+            if (!action.equals("list") && sender.hasPermission("veil.admin")) {
                 return Bukkit.getOnlinePlayers().stream()
                         .map(Player::getName)
                         .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
