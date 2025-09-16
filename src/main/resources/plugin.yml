@@ -6,3 +6,22 @@ prefix: DerexXD
 authors: [ DerexXD ]
 description: Admin command plugin made for KiingTong
 website: https://www.youtube.com/@Kiingtong
+
+commands:
+  invincible:
+    description: Manage player invincibility protection
+    usage: /invincible <add|remove|list> <player>
+    permission: kiingtong.invincible
+  veil:
+    description: Toggle invincibility protection for yourself or others
+    usage: /veil <on|off|toggle|list> [player]
+    aliases: [v]
+    permission: kiingtong.veil
+
+permissions:
+  kiingtong.invincible:
+    description: Internal permission to track who is invincible
+    default: op
+  kiingtong.veil:
+    description: Use of the /veil command
+    default: op

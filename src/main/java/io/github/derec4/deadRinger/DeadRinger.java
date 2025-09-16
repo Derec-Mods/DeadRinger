@@ -10,6 +10,16 @@ public final class DeadRinger extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
+        // Register event listener
+        getServer().getPluginManager().registerEvents(new DamageListener(), this);
+
+        // Register commands
+        getCommand("invincible").setExecutor(new InvincibilityCommand());
+
+        VeilCommand veilCommand = new VeilCommand();
+        getCommand("veil").setExecutor(veilCommand);
+        getCommand("veil").setTabCompleter(veilCommand);
+
         Bukkit.getLogger().info("");
         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "  |_______|                             " +
                 "  ");
@@ -22,5 +32,7 @@ public final class DeadRinger extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        // Clear all protected players when plugin disables
+        InvincibilityManager.clearAll();
     }
 }
