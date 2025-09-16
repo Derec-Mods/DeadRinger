@@ -1,0 +1,8 @@
+name: DeadRinger
+version: '1.0.0.0'
+main: io.github.derec4.deadRinger.DeadRinger
+api-version: '1.18'
+prefix: DerexXD
+authors: [ DerexXD ]
+description: Admin command plugin made for KiingTong
+website: https://www.youtube.com/@Kiingtong
