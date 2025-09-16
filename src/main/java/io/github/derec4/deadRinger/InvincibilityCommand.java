@@ -23,25 +23,14 @@ public class InvincibilityCommand implements CommandExecutor {
 
         String action = args[0].toLowerCase();
 
-        if (action.equals("list")) {
-            sender.sendMessage(ChatColor.GREEN + "Invincible players:");
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (InvincibilityManager.isInvincible(player)) {
-                    sender.sendMessage(ChatColor.WHITE + "- " + player.getName());
-                }
-            }
-            return true;
-        }
-
-        if (args.length < 2) {
+        if (args.length < 2 && !action.equals("list")) {
             sender.sendMessage(ChatColor.RED + "Specify a player!");
             return true;
         }
 
-        Player target = Bukkit.getPlayer(args[1]);
+        Player target = (args.length >= 2) ? Bukkit.getPlayer(args[1]) : null;
 
-        if (target == null) {
+        if (target == null && !action.equals("list")) {
             sender.sendMessage(ChatColor.RED + "Player not found!");
             return true;
         }
@@ -56,6 +45,14 @@ public class InvincibilityCommand implements CommandExecutor {
                 InvincibilityManager.revokeInvincibility(target);
                 sender.sendMessage(ChatColor.RED + "Removed invincibility from " + target.getName());
                 target.sendMessage(ChatColor.RED + "You are no longer invincible!");
+                break;
+            case "list":
+                sender.sendMessage(ChatColor.GREEN + "Invincible players:");
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (InvincibilityManager.isInvincible(player)) {
+                        sender.sendMessage(ChatColor.WHITE + "- " + player.getName());
+                    }
+                }
                 break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: /invincible <add|remove|list> <player>");
