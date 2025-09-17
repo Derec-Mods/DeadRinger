@@ -130,7 +130,7 @@ public class VeilCommand implements CommandExecutor, TabCompleter {
 
     private boolean handleList(CommandSender sender) {
         List<Player> veiledPlayers = Bukkit.getOnlinePlayers().stream()
-            .filter(p -> InvincibilityManager.isInvincible(p))
+            .filter(InvincibilityManager::isInvincible)
             .collect(Collectors.toList());
 
         if (veiledPlayers.isEmpty()) {

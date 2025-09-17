@@ -24,8 +24,7 @@ public class DamageListener implements Listener {
         }
 
         // Edge cases
-        if (event.getCause() == EntityDamageEvent.DamageCause.FALL ||
-            event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
             return;
         }
 
